@@ -25,3 +25,24 @@ Load the basketball player statistics (per minute) data set.
 load bballTrainingData.mat
 whos
 
+Train kNN model
+Fit a kNN classification model to the training data.
+knnmodel = fitcknn(dataTrain,"pos","NumNeighbors",5)
+
+Task2
+{Q}
+Using 5 nearest neighbors reduced the loss, but the model still misclassifies over 50% of the test data set.
+
+Many machine learning methods use the distance between observations as a similarity measure. Smaller distances indicate more similar observations.
+
+In the basketball data set, the statistics have different units and scales, which means some statistics will contribute more than others to the distance calculation. Centering and scaling each statistic makes them contribute more evenly.
+
+By setting the "Standardize" property to true in the fitcknn function, each column of predictor data is normalized to have mean 0 and standard deviation 1, then the model is trained using the standardized data.
+Task
+Modify line 3 again. Add to the fitcknn function call to also set the "Standardize" property to true
+
+
+Code :-
+Train kNN model
+Fit a kNN classification model to the training data.
+knnmodel = fitcknn(dataTrain,"pos","NumNeighbors",5,"Standardize",true);
