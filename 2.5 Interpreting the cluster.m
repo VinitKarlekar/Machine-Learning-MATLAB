@@ -134,3 +134,48 @@ Code:- Task 2
 grp3 = kmeans(X,3)
 silhouette(X,grp3)
 
+##Task3
+If you're not certain about how many groups to use, the evalclusters function can help you make the decision.
+The following command uses the silhouette values with kmeans to evaluate the optimal number of clusters.
+eva = evalclusters(data,...
+    "kmeans","silhouette",...
+    "KList",vectorOfPositiveIntegers)
+Task
+Evaluate k-means clustering using silhouette values for group sizes 2 through 5. Name the result clustEv.
+Code:- Task 3
+clustEv = evalclusters(X,"kmeans","silhouette","KList",2:5)
+
+#Quiz
+Quiz
+Which of the following functions will plot each observation as a line against the variable number?  
+Ans The parallel coordinates plot contains the multivariate data where each observation is represented by the sequence of its coordinate values plotted against the coordinate indices.
+
+
+##Basketball Players
+##Task1
+The table data contains statistics for several basketball players. The players' positions are contained in data.pos.
+The numeric statistics have been extracted and normalized in statsNorm, then used in a Gaussian mixture model (GMM) to divide the players into two groups in grp.
+Task
+Create a heatmap of the cross-tabulated values comparing player's position with their assigned group.
+Code:- Task 1
+Count = crosstab(data.pos,grp)
+heatmap(Count)
+
+##Task2
+The Gaussian mixture model gmModel contains information about the underlying Gaussian distributions used to create the clusters. For example, you can extract the means of the distributions, which correspond to the centroids of the clusters.
+centroids = model.mu
+Task
+Plot the centroid value of each group against the variable (coordinate) number.
+Code:- Task 2
+parallelcoords(gmModel.mu,"Group",1:2)
+xticklabels(labels)
+xtickangle(60)
+
+##Task3
+Task
+Evaluate the GMM clustering of statsNorm for group sizes 2 through 4. Name the result cev.
+Code:- Task 3
+ev = evalclusters(statsNorm,"gmdistribution","DaviesBouldin","KList",2:4)
+optK = cev.OptimalK
+
+
