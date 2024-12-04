@@ -63,3 +63,27 @@ Task
 Use confusionchart to compare the predicted values preds to the known labels (stored in the variable faultCode in the table dataTest) .
 Code:- Task4
 confusionchart(dataTest.faultCode,preds)
+
+
+##Classification learner app
+The Classification Learner app lets you select, train, and evaluate models to classify data. Using this app, you can explore supervised machine learning using various classifiers.
+Task
+Click New Session. Check that the training data is T and that the response variable is faultCode. Click Start Session
+
+Task
+Select the Gaussian Naive Bayes model by choosing it from the Models section.
+
+Task
+Click Train All to train your model.
+
+Typically, you may want to train several models and select the one with the best performance.
+Task
+Select the models Linear Discriminant, Linear SVM, and Fine KNN. Train the new models.
+
+
+Notice that the worst performing model is Fine KNN. One of the reasons for this low performance may be the model parameters. You can modify the model parameters in the app by creating a new model and specifying the parameters in the model's Summary tab.
+Task
+Create a new Fine KNN model from the Models section in the toolstrip. Change the Standardize data hyperparameter to No. Train the customized model.
+
+Try selecting, modifying, and training other models. Can you find a model with a higher accuracy?
+In the following sections, you will learn about the different classification methods as well as some of the common properties you can modify.
