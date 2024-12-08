@@ -21,6 +21,7 @@ The information about the partitions for cross validation will also be stored in
 #
 Fitting Cross-Validated Models
 To create a model with cross validation, provide one of the following options in the model-creation function.
+
          mdl = fitcknn(data,"Response","PropertyName",PropertyValue)
 
 
@@ -29,3 +30,27 @@ To create a model with cross validation, provide one of the following options in
          "Holdout"	                    scalar from 0 to 1	        Holdout with the given fraction reserved for validation.
          "KFold"	                     k (scalar)	                k-fold cross validation
          "Leaveout"	                          "on"	                Leave-one-out cross validation
+
+
+
+ 
+If you already have a partition created using the cvpartition function, you can provide that to the fitting function instead.
+
+cvpt = cvpartition(data.Response,"KFold",k)
+mdl = fitcknn(data,"Response","CVPartition",cvpt)
+Calculating the Loss
+To evaluate a cross-validated model, use the kfoldLoss function.
+mdlLoss = kfoldLoss(mdl)
+
+#Quiz
+(T/F) A smaller value of k will generally give a more reliable evaluation.
+  cvpt = cvpartition(y,"KFold",k)
+  True As k increases, the reliability of the evaluation increases.
+
+#Quiz
+(T/F) A larger value of k will generally take more computational effort.
+  cvpt = cvpartition(y,"KFold",k);
+  True  As k increases, so does computational effort.
+
+
+
