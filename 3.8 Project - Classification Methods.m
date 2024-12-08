@@ -67,3 +67,4 @@ Task
 Create a classifier named mdl to predict the quality for the training data redWineTrain. Calculate the misclassification loss for the test data redWineTest, and assign it to a variable named errRate. Try to find a classifier that repeatedly gives a loss value less than 0.46.
 Code:- mdl = fitcdiscr(redWineTrain,"QCLabel");
 errRate = loss(mdl,redWineTest)
+Done with project
