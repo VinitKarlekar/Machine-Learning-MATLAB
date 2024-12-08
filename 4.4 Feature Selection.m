@@ -163,3 +163,131 @@ How does the performance change?
 #Sequential Feature Selection
 A feature selection approach that can be used with any learning algorithm is sequential feature selection.
 Sequential feature selection is an iterative procedure that, given a specific predictive model, adds and removes predictor variables in turn, and then evaluates the effect on the quality of the model.
+
+#Sequential Feature Selection
+The function sequentialfs performs sequential feature selection.
+
+>> toKeep = sequentialfs(fun,X,y)
+
+Outputs
+toKeep	        Logical vector indicating which predictors are included in the final model.
+
+Inputs
+fun	            Function handle for a function that fits a model and calculates the loss.
+X	              Numeric matrix with m observations and n predictors.
+y	              Numeric vector of m response values.
+
+Note that the first input is a handle to the error function.
+  tokeep = sequentialfs(@errorFun,X,y)
+
+You can use the optional property "cv" to specify the cross validation method. For example, you can specify a 7-fold cross validation.
+  tokeep = sequentialfs(@errorFun,X,y,"cv",7)
+
+  Structure of the Error Function
+  Sequential feature selection requires an error function that builds a model and calculates the prediction error. The error function must have the following structure.
+  Four numeric inputs:
+  two for training the model (predictor matrix and response vector)
+  two for evaluating the model (predictor matrix and response vector)
+  One scalar output representing the prediction error.
+
+errorFun.m
+function error = errorFun(Xtrain,ytrain,Xtest,ytest)
+ 
+% Create the model with the learning method of your choice     
+mdl = fitcsvm(Xtrain,ytrain);
+ 
+% Calculate the number of test observations misclassified
+ypred = predict(mdl,XTest);
+error = nnz(ypred ~= ytest);
+end
+
+Note  You do not need to create the training and test data sets. The sequentialfs function will internally partition the data before calling the error function.
+
+
+#Sequential Feature Selection
+Instructions are in the task pane to the left. Complete and submit each task one at a time.
+This code loads and displays the data.
+rng(0)
+load pumpFeatures.mat
+T
+This code fits a 5-fold cross-validated tree model to the original data and calculates the loss.
+mdlFull = fitctree(T,"faultCode","KFold",5);
+fullLoss = kfoldLoss(mdlFull)
+
+#Task1
+An alternative to writing the error function in a local function or separate file is to create an anonymous function.
+To create an anonymous function that calculates the number of misclassifications given training and test data, use the following pattern:
+anonfun = @(XTrain,yTrain,XTest,yTest)...
+    nnz(yTest ~= predict(...
+    fitfunction(XTrain,yTrain),XTest))
+Task
+Create an anonymous function named ferror that takes four inputs: XTrain, yTrain, XTest, and yTest, and returns the number of inaccurate predictions for yTest. Use a classification tree model.
+
+#Quiz
+Which classification technique allows the use of the predictorImportance function?
+classification tree
+Use the predictorImportance function on a decision tree to track which predictor variables are most important to the  accuracy of the model.
+
+#Quiz
+Which classification technique allows the use of sequential feature selection?
+You can use sequential feature selection for any classification technique, just make sure you define the error function accordingly.
+
+#Quiz
+(T/F) You can either perform feature transformation or feature selection, but not both.
+false
+You can first transform your data, then use selection to choose the transformed variables.
+
+#Accommodating Categorical Data
+Some algorithms and functionality (e.g., sequentialfs) requires predictors in the form of a numeric matrix. If your data contains categorical predictors, how can you include these predictors in the model?
+One option is to assign a number to each category. However, this may impose a false numerical structure on the observations.
+For example, say you assign the numbers 1 through 4 to four categories in a predictor. This implies that the distance between categories 1 and 4 is three times larger than the distance between categories 3 and 4. In reality, the categories are probably equidistant from each other.
+
+Creating Dummy Variables
+A better approach is to create new dummy predictors, with one dummy predictor for each category.
+You can create a matrix of dummy variables using the function dummyvar.
+
+d = dummyvar(c)
+
+Each column of d represents one of the categories in c. Each row corresponds to an observation, and has one element with value 1 and all other elements equal to 0. The 1 appears in the column corresponding to that observation's assigned category.
+This matrix can now be used in a machine learning model in place of the categorical vector c, with each column being treated as a separate predictor variable that indicates the presence (1) or absence (0) of that category of c.
+Concatenate this matrix with a matrix containing the numeric predictors.
+
+#Feature Selection with Categorical Data
+Instructions are in the task pane to the left. Complete and submit each task one at a time.
+This code loads and displays the data.
+rng(0)
+load data.mat
+data
+
+#Task1
+The table data contains five predictors: four are numeric and one is categorical, grit.
+You can use the dummyvar function to convert a categorical vector to a numeric matrix.
+numericMatrix = dummyvar(catVector)
+Task
+Create a numeric matrix of dummy predictors for the categorical data in data.grit. Save it as dvGrit.
+Code:- dvGrit = dummyvar(data.grit)
+
+#Task2
+The table data contains five predictors: four numeric and one categorical, grit. The last column in data contains the response, bin.
+Task
+Create a matrix named predictors containing the numeric predictors in data followed by the dummy predictors dvGrit.
+Use sequential feature selection with a kNN model to determine which variables to keep in the model. Name the logical vector toKeep.
+Code:-predictors = [data{:,1:4} dvGrit];
+ferror = @(XTrain,yTrain,XTest,yTest) nnz(yTest ~= predict(fitcknn(XTrain,yTrain),XTest));
+toKeep = sequentialfs(ferror,predictors,data.bin)
+
+#Task3
+Task
+Create a seven-fold cross-validated kNN model named mdlPart with only the selected predictors. Calculate the loss with this model and name the result partLoss.
+Code:- mdlPart = fitcknn(predictors(:,toKeep),data.bin,"KFold",7);
+partLoss = kfoldLoss(mdlPart)
+
+#Quiz
+If you have an n-element categorical vector with k categories, the dummyvar function will create a matrix of what size?
+n-by-k 
+Each of the k categories is represented by a column in the result, and there will be the same number of observations (rows) as in the original vector.
+
+#Quiz
+(T/F) Suppose feature selection is performed on two dummy variables that were created from a single binomial variable. Either both variables will be selected or neither variable will be selected. Selecting just one of the two dummy variables is not likely to happen
+False
+Only one variable will be chosen for the binomial variable because information in one can easily be derived from the other.
